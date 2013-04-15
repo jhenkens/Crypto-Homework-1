@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D4E94ADC171B853100CF8413 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D4E94ADB171B853100CF8413 /* main.cpp */; };
 		D4E94ADE171B853100CF8413 /* Crypto_Homework_1.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D4E94ADD171B853100CF8413 /* Crypto_Homework_1.1 */; };
+		D4E94AE6171B9EAA00CF8413 /* uint_var.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D4E94AE4171B9EAA00CF8413 /* uint_var.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		D4E94AD8171B853100CF8413 /* Crypto Homework 1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Crypto Homework 1"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4E94ADB171B853100CF8413 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		D4E94ADD171B853100CF8413 /* Crypto_Homework_1.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Crypto_Homework_1.1; sourceTree = "<group>"; };
+		D4E94AE4171B9EAA00CF8413 /* uint_var.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uint_var.cpp; sourceTree = "<group>"; };
+		D4E94AE5171B9EAA00CF8413 /* uint_var.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uint_var.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +65,8 @@
 			children = (
 				D4E94ADB171B853100CF8413 /* main.cpp */,
 				D4E94ADD171B853100CF8413 /* Crypto_Homework_1.1 */,
+				D4E94AE4171B9EAA00CF8413 /* uint_var.cpp */,
+				D4E94AE5171B9EAA00CF8413 /* uint_var.h */,
 			);
 			path = "Crypto Homework 1";
 			sourceTree = "<group>";
@@ -118,6 +123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D4E94ADC171B853100CF8413 /* main.cpp in Sources */,
+				D4E94AE6171B9EAA00CF8413 /* uint_var.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
