@@ -16,6 +16,10 @@
 
 struct uint_var
 {
+    static{
+        
+    }
+    
     uint64_t* num;
     int64_t numLength;
     
@@ -25,10 +29,20 @@ struct uint_var
     uint_var operator-(const uint_var& other);
     uint_var operator++(int);
     uint_var operator--(int);
+    uint_var operator>>=(const uint64_t& other);
+    uint_var operator*=(const uint_var& other);
+    uint_var operator%=(const uint_var& other);
+    uint_var modMult(const uint_var& mult,const uint_var& mod);
+    uint_var modAdd(const uint_var& add,const uint_var& mod);
+    uint_var modSub(const uint_var& sub,const uint_var& mod);
+
     
-    bool operator<(const uint_var& other);
-    bool operator<(const uint64_t& other);
+//    bool operator<(const uint_var& other);
+//    bool operator<(const uint64_t& other);
     bool operator>(const uint64_t& other);
+    
+    void operator=(const uint64_t& other);
+    uint64_t operator%(const uint64_t& other);
     
     void print();
     

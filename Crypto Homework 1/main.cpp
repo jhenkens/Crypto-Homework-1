@@ -11,13 +11,17 @@
 #include "uint_var.h"
 
 
-/*
- * n is the modulous
- * e is the exponent
- * M is the base
- */
-uint64_t* ModExp( uint64_t* M, uint64_t m_bits, uint64_t* n, uint64_t n_bits, uint64_t* e, uint64_t e_bits){
-    
+
+uint64_t* ModExp( uint_var& base, uint_var& exponent, uint_var& modulus, uint_var& result){
+    result = 1;
+    while (exponent > 0){
+        if ((exponent % 2) == 1){
+            result = (result * base) % modulus;
+        }
+        exponent >>= 1;
+        base = (base * base) mod modulus
+    return result
+            
 }
 
 int main(int argc, const char * argv[])
@@ -35,6 +39,11 @@ int main(int argc, const char * argv[])
     a--;
     a.print();
     uint_var b(4);
+    b.num[3]=0x1000000000000001;
+    b.num[2]=0x0100000000000001;
+    b.print();
+    b>>=4;
+    b.print();
     
     printf("%d\n",b>0);
     return 0;

@@ -58,6 +58,22 @@ uint_var uint_var::operator--(int){
     return *this;
 }
 
+uint_var uint_var::operator>>=(const uint64_t& other){
+    uint64_t mask = (1<<other)-1;
+    uint64_t negativeShift = 64-other;
+    
+    int64_t pos = numLength-1;
+    
+    num[pos]>>=other;
+    pos--;
+    while(pos>=0){
+        num[pos+1]|=(num[pos]&mask)<<negativeShift;
+        num[pos]>>=other;
+        pos--;
+    }
+    return *this;
+}
+
 bool uint_var::operator>(const uint64_t& other){
     if(num[numLength-1] > other){
         return true;
@@ -71,6 +87,25 @@ bool uint_var::operator>(const uint64_t& other){
         }
     }
     return false;
+}
+
+uint_var uint_var::operator%=(const uint_var& other){
+    
+}
+
+uint_var uint_var::operator*=(const uint_var& other){
+    
+}
+
+void uint_var::operator=(const uint64_t& other){
+    for (int64_t i = 0;i<numLength-1;i++){
+        num[i]=0;
+    }
+    num[numLength-1]=other;
+}
+
+uint64_t uint_var::operator%(const uint64_t& other){
+    return num[numLength-1]%other;
 }
 
 void uint_var::print(){
