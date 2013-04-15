@@ -16,10 +16,7 @@
 
 struct uint_var
 {
-    static{
-        
-    }
-    
+
     uint64_t* num;
     int64_t numLength;
     
@@ -45,5 +42,7 @@ struct uint_var
     uint64_t operator%(const uint64_t& other);
     
     void print();
-    
+
+private:
+    static uint_var helper;
 };

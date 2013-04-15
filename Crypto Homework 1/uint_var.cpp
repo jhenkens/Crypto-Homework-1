@@ -8,6 +8,8 @@
 
 #include "uint_var.h"
 
+uint_var uint_var::helper(33);
+
 uint_var::uint_var(int64_t size){
     numLength=size;
     num = (uint64_t*) malloc(sizeof(uint64_t)*numLength);
@@ -87,6 +89,17 @@ bool uint_var::operator>(const uint64_t& other){
         }
     }
     return false;
+}
+
+uint_var uint_var::modMult(const uint_var& mult,const uint_var& mod){
+    
+}
+
+//This num, and add should all be of the length mod or smaller
+uint_var uint_var::modAdd(const uint_var& add,const uint_var& mod){
+    uint64_t temp[mod.numLength+1];
+    
+    helper
 }
 
 uint_var uint_var::operator%=(const uint_var& other){
