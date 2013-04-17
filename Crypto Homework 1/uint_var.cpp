@@ -122,7 +122,7 @@ uint_var& uint_var::operator*(const uint_var &other){
         for( int64_t j = numLength-1; j>=0; j--){
             uint64_t temp = num[j];
             temp *= other.num[i];
-            temp += carry + (*result).num[1+j+i];
+            temp = (temp + carry) + (*result).num[1+j+i];
             (*result).num[1+j+i] = temp&0xFFFFFFFF;
             carry = (temp&0xFFFFFFFF00000000)>>32;
         }
