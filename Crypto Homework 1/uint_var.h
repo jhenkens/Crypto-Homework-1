@@ -25,6 +25,8 @@ struct uint_var
 
     uint32_t* num;
     int64_t numLength;
+    bool underflow;
+    bool overflow;
     
     uint_var(const int64_t size);
     uint_var(const int64_t size, const uint32_t* const data);
@@ -35,6 +37,8 @@ struct uint_var
     uint_var& operator-=(const uint32_t& other);
     uint_var& operator*(const uint_var& other);
     uint_var& operator*(const uint32_t& other);
+    uint_var& operator%(const uint_var& other);
+    uint_var& operator%(const uint32_t& other);
     
 //    uint_var& operator+(const uint_var& other);
 //    uint_var& operator-(const uint_var& other);
@@ -45,6 +49,7 @@ struct uint_var
     uint_var& operator++(int);
     uint_var& operator--(int);
     uint_var& operator>>=(const uint32_t& other);
+    uint_var& operator<<=(const uint32_t& other);
     uint_var& modMult(const uint_var& mult,const uint_var& mod);
     uint_var& modAdd(const uint_var& add,const uint_var& mod);
     uint_var& modSub(const uint_var& sub,const uint_var& mod);
@@ -53,11 +58,13 @@ struct uint_var
 //    bool operator<(const uint_var& other);
 //    bool operator<(const uint32_t& other);
     bool operator>(const uint32_t& other);
+    bool notZero();
     
     uint_var& operator=(const uint32_t& other);
     uint_var& operator=(const uint_var& other);
     
     void print();
+    ~uint_var();
 
 private:
     static uint_var helper;

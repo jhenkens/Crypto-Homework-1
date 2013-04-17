@@ -26,14 +26,11 @@
 
 int main(int argc, const char * argv[])
 {
-    uint32_t arr[] = {0xFFFFFFFF,0xFFFFFFFF};
+    uint32_t arr[] = {0x0000FFFF,0x0F0FFFFF};
     uint_var a(2,arr);
-    uint32_t arr2[] = {0,857};
-    uint_var b(a);
-    uint_var* result = &(a*b);
     a.print();
-    result->print();
-    a.print();
+    uint_var* b = &(a%1235121234);
+    b->print();
 //    printf("%d\n",b>0);
     return 0;
 }

@@ -34,7 +34,7 @@ uint_var::uint_var(const uint_var& other){
 
 uint_var& uint_var::operator+=(const uint_var& other){
     int64_t pos = numLength-1;
-    bool overflow=false;
+    overflow=false;
     while(pos>=0){
         if(overflow){
             if(num[pos] != UINT32_MAX){
@@ -53,7 +53,7 @@ uint_var& uint_var::operator+=(const uint_var& other){
 
 uint_var& uint_var::operator+=(const uint32_t& other){
     int64_t pos = numLength-1;
-    bool overflow = false;
+    overflow = false;
     
     if(num[pos] > UINT32_MAX-other){
         overflow = true;
@@ -74,7 +74,7 @@ uint_var& uint_var::operator+=(const uint32_t& other){
 
 uint_var& uint_var::operator-=(const uint_var& other){
     int64_t pos = numLength-1;
-    bool underflow=false;
+    underflow=false;
     while(pos>=0){
         if(underflow){
             if(num[pos] != 0){
@@ -93,7 +93,7 @@ uint_var& uint_var::operator-=(const uint_var& other){
 
 uint_var& uint_var::operator-=(const uint32_t& other){
     int64_t pos = numLength-1;
-    bool underflow = false;
+    underflow = false;
     
     if(num[pos] < other){
         underflow = true;
@@ -115,8 +115,9 @@ uint_var& uint_var::operator-=(const uint32_t& other){
 }
 
 uint_var& uint_var::operator*(const uint_var &other){
+    
     uint_var* result = new uint_var(numLength+other.numLength);
-
+    
     for(int64_t i = other.numLength-1; i>=0; i--){
         uint32_t carry = 0;
         for( int64_t j = numLength-1; j>=0; j--){
@@ -137,9 +138,52 @@ uint_var& uint_var::operator*(const uint32_t& other){
     return (*this)*temp;
 }
 
+uint_var& uint_var::operator%(const uint_var &other){
+    uint_var  P(this->numLength*2);
+    uint32_t* p2 = P.num;
+    p2+=this->numLength;
+    memcpy(p2,this->num,sizeof(uint32_t)*this->numLength);
+    uint_var prev(P);
+    
+    uint_var D(this->numLength*2);
+    uint32_t* d2 = D.num;
+    d2+=this->numLength;
+    memcpy(d2,other.num,sizeof(uint32_t)*this->numLength);
+    D<<=(uint32_t)(numLength*sizeof(uint32_t)*8);
+    
+    for(int64_t i = 0; i <= numLength*sizeof(uint32_t)*8; i++){
+        prev=P;
+        P-=D;
+        if(P.underflow){
+            P=prev;
+        }
+        D>>=1;
+    }
+    uint_var* result = new uint_var((*this).numLength);
+    memcpy((*result).num,P.num+numLength,numLength*sizeof(uint32_t));
+    return *result;
+}
+
+
+uint_var& uint_var::operator%(const uint32_t& other){
+    uint_var temp(numLength);
+    temp.num[numLength-1]=other;
+    return (*this)%temp;
+}
+
+
+bool uint_var::notZero(){
+    for(int64_t i = numLength-1; i>=0; i--){
+        if(num[i]){
+            return true;
+        }
+    }
+    return false;
+}
+
 uint_var& uint_var::operator++(int){
     int64_t pos = numLength-1;
-    bool overflow = false;
+    overflow = false;
     
     if(num[pos] == UINT32_MAX){
         overflow = true;
@@ -160,7 +204,7 @@ uint_var& uint_var::operator++(int){
 
 uint_var& uint_var::operator--(int){
     int64_t pos = numLength-1;
-    bool underflow = false;
+    underflow = false;
     
     if(num[pos] == 0){
         underflow = true;
@@ -180,17 +224,64 @@ uint_var& uint_var::operator--(int){
 }
 
 uint_var& uint_var::operator>>=(const uint32_t& other){
-    uint32_t mask = (1<<other)-1;
-    uint32_t negativeShift = sizeof(uint32_t)*8-other;
+    if(other==0){
+        return *this;
+    } else if(other==sizeof(uint32_t)*8){
+        for(int64_t pos = numLength-2; pos>=0;pos-- ){
+            num[pos+1] = num[pos];
+        }
+        num[0]=0;
+    } else if(other<sizeof(uint32_t)*8){
+        uint32_t mask = (1<<other)-1;
+        uint32_t negativeShift = sizeof(uint32_t)*8-other;
+        
+        
+        num[numLength-1]>>=other;
+        for(int64_t pos = numLength-2; pos >= 0; pos--){
+            num[pos+1]|=(num[pos]&mask)<<negativeShift;
+            num[pos]>>=other;
+        }
+    } else{
+        int64_t words = other/(sizeof(uint32_t)*8);
+        for(int64_t pos = numLength-1-words; pos>=0;pos-- ){
+            num[pos+words] = num[pos];
+        }
+        for(words-=1;words>=0;words--){
+            num[words]=0;
+        }
+        (*this)>>=(other%(sizeof(uint32_t)*8));
+    }
     
-    int64_t pos = numLength-1;
-    
-    num[pos]>>=other;
-    pos--;
-    while(pos>=0){
-        num[pos+1]|=(num[pos]&mask)<<negativeShift;
-        num[pos]>>=other;
-        pos--;
+    return *this;
+}
+
+uint_var& uint_var::operator<<=(const uint32_t& other){
+    if(other==0){
+        return *this;
+    } else if(other==sizeof(uint32_t)*8){
+        for(int64_t pos = 1; pos<numLength;pos++ ){
+            num[pos-1] = num[pos];
+        }
+        num[numLength-1]=0;
+    } else if(other<sizeof(uint32_t)*8){
+        uint32_t negativeShift = sizeof(uint32_t)*8-other;
+        uint32_t mask = ~((1<<negativeShift)-1);
+
+        
+        num[0]<<=other;
+        for(int64_t pos = 1; pos < numLength; pos++){
+            num[pos-1]|=(num[pos]&mask)>>negativeShift;
+            num[pos]<<=other;
+        }
+    } else{
+        int64_t words = other/(sizeof(uint32_t)*8);
+        for(int64_t pos = words; pos<numLength;pos++ ){
+            num[pos-words] = num[pos];
+        }
+        for(words=numLength-words;words<numLength;words++){
+            num[words]=0;
+        }
+        (*this)<<=(other%(sizeof(uint32_t)*8));
     }
     return *this;
 }
@@ -265,6 +356,10 @@ uint_var& uint_var::operator=(const uint_var& other){
 //uint32_t uint_var::operator%(const uint32_t& other){
 //    return num[numLength-1] % other;
 //}
+
+uint_var::~uint_var(){
+    delete num;
+}
 
 void uint_var::print(){
     int64_t pos = 0;
