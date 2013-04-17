@@ -222,6 +222,7 @@
 				D4E94AE3171B853100CF8413 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
