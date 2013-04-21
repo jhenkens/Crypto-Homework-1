@@ -13,21 +13,10 @@
 #include <string>
 #include <cassert>
 
+#ifndef CS290BITLENGTH
 #define CS290BITLENGTH 512
+#endif
 
-//
-//
-//uint64_t* ModExp( uint_var& base, uint_var& exponent, uint_var& modulus, uint_var& result){
-//    result = 1;
-//    while (exponent > 0){
-//        if ((exponent % 2) == 1){
-//            result = (result * base) % modulus;
-//        }
-//        exponent >>= 1;
-//        base = (base * base) mod modulus
-//    return result
-//            
-//}
 
 void generateRandomNumbers(int64_t words,int64_t count){
     std::random_device generator;
@@ -103,6 +92,12 @@ int main(int argc, const char * argv[])
 //    uint_var* result2 = &(a%b);
     result->print();
     delete result;
+    int i = 0;
+    for(; i<41943040/(CS290BITLENGTH*CS290BITLENGTH); i++){
+        result = &(base.modExp(exp,mod));
+        delete result;
+    }
+    printf("Ran %d tests.\n",i);
 //    printf("%d\n",b>0);
     return 0;
 }

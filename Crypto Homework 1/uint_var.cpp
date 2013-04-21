@@ -32,24 +32,24 @@ uint_var::uint_var(const uint_var& other){
     memcpy(num,other.num,numLength*sizeof(uint32_t));
 }
 
-uint_var& uint_var::operator+=(const uint_var& other){
-    int64_t pos = numLength-1;
-    overflow=false;
-    while(pos>=0){
-        if(overflow){
-            if(num[pos] != UINT32_MAX){
-                overflow = false;
-            }
-            num[pos]++;
-        }
-        if(num[pos] > UINT32_MAX-other.num[pos]){
-            overflow = true;
-        }
-        num[pos]+=other.num[pos];
-        pos--;
-    }
-    return *this;
-}
+//uint_var& uint_var::operator+=(const uint_var& other){
+//    int64_t pos = numLength-1;
+//    overflow=false;
+//    while(pos>=0){
+//        if(overflow){
+//            if(num[pos] != UINT32_MAX){
+//                overflow = false;
+//            }
+//            num[pos]++;
+//        }
+//        if(num[pos] > UINT32_MAX-other.num[pos]){
+//            overflow = true;
+//        }
+//        num[pos]+=other.num[pos];
+//        pos--;
+//    }
+//    return *this;
+//}
 
 uint_var& uint_var::operator+=(const uint32_t& other){
     int64_t pos = numLength-1;
@@ -91,28 +91,28 @@ uint_var& uint_var::operator-=(const uint_var& other){
     return *this;
 }
 
-uint_var& uint_var::operator-=(const uint32_t& other){
-    int64_t pos = numLength-1;
-    underflow = false;
-    
-    if(num[pos] < other){
-        underflow = true;
-    }
-    
-    num[pos]-=other;
-    pos--;
-    
-    while(underflow && pos>=0){
-        if(num[pos] != 0){
-            underflow = false;
-        }
-        num[pos]--;
-        pos--;
-    }
-    
-    return *this;
-    
-}
+//uint_var& uint_var::operator-=(const uint32_t& other){
+//    int64_t pos = numLength-1;
+//    underflow = false;
+//    
+//    if(num[pos] < other){
+//        underflow = true;
+//    }
+//    
+//    num[pos]-=other;
+//    pos--;
+//    
+//    while(underflow && pos>=0){
+//        if(num[pos] != 0){
+//            underflow = false;
+//        }
+//        num[pos]--;
+//        pos--;
+//    }
+//    
+//    return *this;
+//    
+//}
 
 uint_var& uint_var::operator*(const uint_var &other){
     
@@ -132,11 +132,11 @@ uint_var& uint_var::operator*(const uint_var &other){
     return *result;
 }
 
-uint_var& uint_var::operator*(const uint32_t& other){
-    uint_var temp(1);
-    temp.num[0]=other;
-    return (*this)*temp;
-}
+//uint_var& uint_var::operator*(const uint32_t& other){
+//    uint_var temp(1);
+//    temp.num[0]=other;
+//    return (*this)*temp;
+//}
 
 uint_var& uint_var::operator%(const uint_var &other){
     uint_var  P(this->numLength*2);
@@ -165,11 +165,11 @@ uint_var& uint_var::operator%(const uint_var &other){
 }
 
 
-uint_var& uint_var::operator%(const uint32_t& other){
-    uint_var temp(numLength);
-    temp.num[numLength-1]=other;
-    return (*this)%temp;
-}
+//uint_var& uint_var::operator%(const uint32_t& other){
+//    uint_var temp(numLength);
+//    temp.num[numLength-1]=other;
+//    return (*this)%temp;
+//}
 
 
 bool uint_var::notZero(){
@@ -181,47 +181,47 @@ bool uint_var::notZero(){
     return false;
 }
 
-uint_var& uint_var::operator++(int){
-    int64_t pos = numLength-1;
-    overflow = false;
-    
-    if(num[pos] == UINT32_MAX){
-        overflow = true;
-    }
-    
-    num[pos]++;
-    pos--;
-    
-    while(overflow && pos>=0){
-        if(num[pos] != UINT32_MAX){
-            overflow = false;
-        }
-        num[pos]++;
-        pos--;
-    }
-    return *this;
-}
+//uint_var& uint_var::operator++(int){
+//    int64_t pos = numLength-1;
+//    overflow = false;
+//    
+//    if(num[pos] == UINT32_MAX){
+//        overflow = true;
+//    }
+//    
+//    num[pos]++;
+//    pos--;
+//    
+//    while(overflow && pos>=0){
+//        if(num[pos] != UINT32_MAX){
+//            overflow = false;
+//        }
+//        num[pos]++;
+//        pos--;
+//    }
+//    return *this;
+//}
 
-uint_var& uint_var::operator--(int){
-    int64_t pos = numLength-1;
-    underflow = false;
-    
-    if(num[pos] == 0){
-        underflow = true;
-    }
-    
-    num[pos]--;
-    pos--;
-    
-    while(underflow && pos>=0){
-        if(num[pos] != 0){
-            underflow = false;
-        }
-        num[pos]--;
-        pos--;
-    }
-    return *this;
-}
+//uint_var& uint_var::operator--(int){
+//    int64_t pos = numLength-1;
+//    underflow = false;
+//    
+//    if(num[pos] == 0){
+//        underflow = true;
+//    }
+//    
+//    num[pos]--;
+//    pos--;
+//    
+//    while(underflow && pos>=0){
+//        if(num[pos] != 0){
+//            underflow = false;
+//        }
+//        num[pos]--;
+//        pos--;
+//    }
+//    return *this;
+//}
 
 uint_var& uint_var::operator>>=(const uint32_t& other){
     if(other==0){
@@ -286,31 +286,31 @@ uint_var& uint_var::operator<<=(const uint32_t& other){
     return *this;
 }
 
-bool uint_var::operator>(const uint32_t& other){
-    if(num[numLength-1] > other){
-        return true;
-    } else{
-        int64_t pos = numLength-2;
-        while(pos>=0){
-            if(num[pos]!=0){
-                return true;
-            }
-            pos--;
-        }
-    }
-    return false;
-}
+//bool uint_var::operator>(const uint32_t& other){
+//    if(num[numLength-1] > other){
+//        return true;
+//    } else{
+//        int64_t pos = numLength-2;
+//        while(pos>=0){
+//            if(num[pos]!=0){
+//                return true;
+//            }
+//            pos--;
+//        }
+//    }
+//    return false;
+//}
 
-bool uint_var::operator<(const uint_var& other){
-    for( int64_t pos = 0; pos < numLength;pos++){
-        if(num[pos]<other.num[pos]){
-            return true;
-        } else if(num[pos]>other.num[pos]){
-            return false;
-        }
-    }
-    return false;
-}
+//bool uint_var::operator<(const uint_var& other){
+//    for( int64_t pos = 0; pos < numLength;pos++){
+//        if(num[pos]<other.num[pos]){
+//            return true;
+//        } else if(num[pos]>other.num[pos]){
+//            return false;
+//        }
+//    }
+//    return false;
+//}
 
 bool uint_var::operator==(const uint_var& other){
     if(numLength!=other.numLength){ return false;}
@@ -359,14 +359,6 @@ uint_var& uint_var::modExp(const uint_var& power,const uint_var& mod){
     return *result;
 }
 
-//
-////This num, and add should all be of the length mod or smaller
-//uint_var uint_var::modAdd(const uint_var& add,const uint_var& mod){
-//    uint32_t temp[mod.numLength+1];
-//
-//    helper
-//}
-
 
 uint_var& uint_var::operator=(const uint32_t& other){
     for (int64_t i = 0;i<numLength-1;i++){
@@ -382,30 +374,6 @@ uint_var& uint_var::operator=(const uint_var& other){
     }
     return *this;
 }
-//
-//uint_var& uint_var::operator+(const uint_var& other){
-//    uint_var* result = new uint_var(*this);
-//    (*result)+=other;
-//    return *result;
-//}
-//
-//uint_var& uint_var::operator-(const uint_var& other){
-//    return uint_var(*this) -= other;
-//}
-//
-//const uint_var& uint_var::operator+(const uint32_t& other) const{
-//    uint_var* result = new uint_var(*this);
-//    (*result)+=other;
-//    return *result;
-//}
-//
-//uint_var& uint_var::operator-(const uint32_t& other){
-//    return uint_var(*this) -= other;
-//}
-//
-//uint32_t uint_var::operator%(const uint32_t& other){
-//    return num[numLength-1] % other;
-//}
 
 uint_var::~uint_var(){
     delete[] num;
