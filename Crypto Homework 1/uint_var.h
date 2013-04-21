@@ -53,17 +53,20 @@ struct uint_var
     uint_var& modMult(const uint_var& mult,const uint_var& mod);
     uint_var& modAdd(const uint_var& add,const uint_var& mod);
     uint_var& modSub(const uint_var& sub,const uint_var& mod);
+    uint_var& modExp(const uint_var& exp,const uint_var& mod);
 
     
 //    bool operator<(const uint_var& other);
 //    bool operator<(const uint32_t& other);
     bool operator>(const uint32_t& other);
+    bool operator<(const uint_var& other);
+    bool operator==(const uint_var& other);
     bool notZero();
     
     uint_var& operator=(const uint32_t& other);
     uint_var& operator=(const uint_var& other);
     
-    void print();
+    void  print() const;
     ~uint_var();
 
 private:

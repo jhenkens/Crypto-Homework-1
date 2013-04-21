@@ -146,9 +146,9 @@ uint_var& uint_var::operator%(const uint_var &other){
     uint_var prev(P);
     
     uint_var D(this->numLength*2);
-    uint32_t* d2 = D.num;
-    d2+=this->numLength;
-    memcpy(d2,other.num,sizeof(uint32_t)*this->numLength);
+    for(int64_t i = 1; i<=other.numLength;i++){
+        D.num[D.numLength-i]=other.num[other.numLength-i];
+    }
     D<<=(uint32_t)(numLength*sizeof(uint32_t)*8);
     
     for(int64_t i = 0; i <= numLength*sizeof(uint32_t)*8; i++){
@@ -159,8 +159,8 @@ uint_var& uint_var::operator%(const uint_var &other){
         }
         D>>=1;
     }
-    uint_var* result = new uint_var((*this).numLength);
-    memcpy((*result).num,P.num+numLength,numLength*sizeof(uint32_t));
+    uint_var* result = new uint_var(other.numLength);
+    memcpy((*result).num,P.num+(P.numLength-other.numLength),other.numLength*sizeof(uint32_t));
     return *result;
 }
 
@@ -266,7 +266,7 @@ uint_var& uint_var::operator<<=(const uint32_t& other){
     } else if(other<sizeof(uint32_t)*8){
         uint32_t negativeShift = sizeof(uint32_t)*8-other;
         uint32_t mask = ~((1<<negativeShift)-1);
-
+        
         
         num[0]<<=other;
         for(int64_t pos = 1; pos < numLength; pos++){
@@ -301,19 +301,69 @@ bool uint_var::operator>(const uint32_t& other){
     return false;
 }
 
-//uint_var& uint_var::modMult(const uint_var& mult,const uint_var& mod){
-//    uint_var* result = new uint_var();
-//    int64_t pos = numLength-1;
-//    while(numLength>=0){
-//        *result = (*result)*2 + (*this)*
-//    }
-//    *result =
-//}
+bool uint_var::operator<(const uint_var& other){
+    for( int64_t pos = 0; pos < numLength;pos++){
+        if(num[pos]<other.num[pos]){
+            return true;
+        } else if(num[pos]>other.num[pos]){
+            return false;
+        }
+    }
+    return false;
+}
+
+bool uint_var::operator==(const uint_var& other){
+    if(numLength!=other.numLength){ return false;}
+    for( int64_t pos = 0; pos < numLength;pos++){
+        if(num[pos]!=other.num[pos]){
+            return false;
+        }
+    }
+    return true;
+}
+
+uint_var& uint_var::modMult(const uint_var& mult,const uint_var& mod){
+    uint_var* temp = &((*this)*mult);
+    uint_var* result = &((*temp)%mod);
+    delete temp;
+    return *result;
+}
+
+uint_var& uint_var::modExp(const uint_var& power,const uint_var& mod){
+    /* Naive implementation
+     uint_var i(power.numLength);
+     uint_var* result = new uint_var(numLength);
+     (*result)=1;
+     for( ; i<power;i++){
+     result = &((*result).modMult(*this, mod));
+     }
+     return *result;
+     */
+    uint_var* result = new uint_var(numLength);
+    (*result)=1;
+    uint_var* temp;
+    uint_var* base = new uint_var(*this);
+    uint_var pow(power);
+    while(pow.notZero()){
+        if(pow.num[pow.numLength-1]& 1){
+            temp = &((*result).modMult(*base, mod));
+            delete result;
+            result = temp;
+        }
+        pow>>=1;
+        temp = &((*base).modMult(*base, mod));
+        delete base;
+        base = temp;
+    }
+    delete base;
+    return *result;
+}
+
 //
 ////This num, and add should all be of the length mod or smaller
 //uint_var uint_var::modAdd(const uint_var& add,const uint_var& mod){
 //    uint32_t temp[mod.numLength+1];
-//    
+//
 //    helper
 //}
 
@@ -361,11 +411,11 @@ uint_var::~uint_var(){
     delete num;
 }
 
-void uint_var::print(){
+void uint_var::print () const {
     int64_t pos = 0;
     printf("0x");
     while(pos<numLength){
-        printf("%08llx",num[pos]);
+        printf("%08x",num[pos]);
         pos++;
     }
     printf("\n");
