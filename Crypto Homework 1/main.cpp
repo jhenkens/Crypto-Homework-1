@@ -102,6 +102,7 @@ int main(int argc, const char * argv[])
     assert((*result)==resultPreCalc);
 //    uint_var* result2 = &(a%b);
     result->print();
+    delete result;
 //    printf("%d\n",b>0);
     return 0;
 }
