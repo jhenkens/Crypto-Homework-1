@@ -408,7 +408,7 @@ uint_var& uint_var::operator=(const uint_var& other){
 //}
 
 uint_var::~uint_var(){
-    delete num;
+    delete[] num;
 }
 
 void uint_var::print () const {
