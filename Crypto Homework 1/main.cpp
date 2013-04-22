@@ -99,12 +99,12 @@ int main(int argc, const char * argv[])
     result->print();
     assert((*result)==resultPreCalc);
     delete result;
-    int i = 0;
-    for(; i<41943040/(CS290BITLENGTH*CS290BITLENGTH); i++){
-        result = &(base.modExp(exp,mod));
-        delete result;
-    }
-    printf("Ran %d tests.\n",i);
+//    int i = 0;
+//    for(; i<41943040/(CS290BITLENGTH*CS290BITLENGTH); i++){
+//        result = &(base.modExp(exp,mod));
+//        delete result;
+//    }
+//    printf("Ran %d tests.\n",i);
     
 
 //    uint32_t b[1] = {12345};
