@@ -501,6 +501,9 @@ uint_var& uint_var::modExp(const uint_var& power,const uint_var& mod){
             shift-=4;
         }
     }
+    for (int i = 1; i < 16; i++){
+        delete bases[i];
+    }
     return *result;
 #endif
 }
