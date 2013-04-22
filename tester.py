@@ -46,4 +46,6 @@ if __name__ == "__main__":
         print ""
         words*=2
 
+    print hex(pow(arrs[1][0],12345,arrs[1][2]))
+
 

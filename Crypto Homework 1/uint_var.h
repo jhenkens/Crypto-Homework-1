@@ -31,9 +31,10 @@ struct uint_var
     uint_var(const int64_t size);
     uint_var(const int64_t size, const uint32_t* const data);
     uint_var(const uint_var& other);
-//    uint_var& operator+=(const uint_var& other);
+    uint_var& operator+=(const uint_var& other);
     uint_var& operator+=(const uint32_t& other);
     uint_var& operator-=(const uint_var& other);
+    bool operator[](uint32_t pos);
 //    uint_var& operator-=(const uint32_t& other);
     uint_var& operator*(const uint_var& other);
 //    uint_var& operator*(const uint32_t& other);
@@ -49,7 +50,7 @@ struct uint_var
 //    uint_var& modAdd(const uint_var& add,const uint_var& mod);
 //    uint_var& modSub(const uint_var& sub,const uint_var& mod);
     uint_var& modExp(const uint_var& exp,const uint_var& mod);
-
+    uint_var& modExp(const uint32_t& exp,const uint_var& mod, uint32_t startPos = 0);
     
     bool operator>(const uint32_t& other);
     bool operator<(const uint_var& other);

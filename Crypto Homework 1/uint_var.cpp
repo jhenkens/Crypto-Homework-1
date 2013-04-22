@@ -8,6 +8,7 @@
 
 #include "uint_var.h"
 
+
 uint_var uint_var::helper(33);
 
 
@@ -32,24 +33,57 @@ uint_var::uint_var(const uint_var& other){
     memcpy(num,other.num,numLength*sizeof(uint32_t));
 }
 
-//uint_var& uint_var::operator+=(const uint_var& other){
-//    int64_t pos = numLength-1;
-//    overflow=false;
-//    while(pos>=0){
-//        if(overflow){
-//            if(num[pos] != UINT32_MAX){
-//                overflow = false;
-//            }
-//            num[pos]++;
-//        }
-//        if(num[pos] > UINT32_MAX-other.num[pos]){
-//            overflow = true;
-//        }
-//        num[pos]+=other.num[pos];
-//        pos--;
-//    }
-//    return *this;
-//}
+uint_var& uint_var::operator+=(const uint_var& other){
+    int64_t pos = 1;
+    overflow=false;
+    while(pos<=other.numLength){
+        if(overflow){
+            if(num[numLength-pos] != UINT32_MAX){
+                overflow = false;
+            }
+            num[numLength-pos]++;
+        }
+        if(num[numLength-pos] > UINT32_MAX-other.num[other.numLength-pos]){
+            overflow = true;
+        }
+        num[numLength-pos]+=other.num[other.numLength-pos];
+        pos++;
+    }
+	while(overflow && pos<=numLength){
+        if(num[numLength-pos] != UINT32_MAX){
+            overflow = false;
+        }
+        num[numLength-pos]++;
+        pos++;
+	}
+    return *this;
+}
+
+uint_var& uint_var::operator-=(const uint_var& other){
+    int64_t pos = 1;
+    underflow=false;
+    while(pos<=other.numLength){
+        if(underflow){
+            if(num[numLength-pos] != 0){
+                underflow = false;
+            }
+            num[numLength-pos]--;
+        }
+        if(num[numLength-pos] < other.num[other.numLength-pos]){
+            underflow = true;
+        }
+        num[numLength-pos]-=other.num[other.numLength-pos];
+        pos++;
+    }
+    while(underflow && pos<=numLength){
+        if(num[numLength-pos] != 0){
+            underflow = false;
+        }
+        num[numLength-pos]--;
+        pos++;
+	}
+    return *this;
+}
 
 uint_var& uint_var::operator+=(const uint32_t& other){
     int64_t pos = numLength-1;
@@ -72,24 +106,7 @@ uint_var& uint_var::operator+=(const uint32_t& other){
     return *this;
 }
 
-uint_var& uint_var::operator-=(const uint_var& other){
-    int64_t pos = numLength-1;
-    underflow=false;
-    while(pos>=0){
-        if(underflow){
-            if(num[pos] != 0){
-                underflow = false;
-            }
-            num[pos]--;
-        }
-        if(num[pos] < other.num[pos]){
-            underflow = true;
-        }
-        num[pos]-=other.num[pos];
-        pos--;
-    }
-    return *this;
-}
+
 
 //uint_var& uint_var::operator-=(const uint32_t& other){
 //    int64_t pos = numLength-1;
@@ -301,16 +318,47 @@ uint_var& uint_var::operator<<=(const uint32_t& other){
 //    return false;
 //}
 
-//bool uint_var::operator<(const uint_var& other){
-//    for( int64_t pos = 0; pos < numLength;pos++){
-//        if(num[pos]<other.num[pos]){
-//            return true;
-//        } else if(num[pos]>other.num[pos]){
-//            return false;
-//        }
-//    }
-//    return false;
-//}
+bool uint_var::operator<(const uint_var& other){
+    int64_t diff = numLength-other.numLength;
+    if(diff>0){
+        for(int i = 0; i < diff; i++){
+            if(num[i]!=0){
+                return false;
+            }
+        }
+        for( int64_t pos = 0; pos < other.numLength;pos++){
+            if(num[pos+diff]<other.num[pos]){
+                return true;
+            } else if(num[pos+diff]>other.num[pos]){
+                return false;
+            }
+        }
+    }
+    else if(diff<0){
+        for(int i = 0; i < -diff; i++){
+            if(other.num[i]!=0){
+                return true;
+            }
+        }
+        for( int64_t pos = 0; pos < numLength;pos++){
+            if(num[pos]<other.num[pos+diff]){
+                return true;
+            } else if(num[pos]>other.num[pos+diff]){
+                return false;
+            }
+        }
+    }
+    else {
+        for( int64_t pos = 0; pos < numLength;pos++){
+            if(num[pos]<other.num[pos]){
+                return true;
+            } else if(num[pos]>other.num[pos]){
+                return false;
+            }
+        }
+    }
+    return false;
+}
 
 bool uint_var::operator==(const uint_var& other){
     if(numLength!=other.numLength){ return false;}
@@ -322,43 +370,171 @@ bool uint_var::operator==(const uint_var& other){
     return true;
 }
 
+//Assumes that this, and multi, are both < mod
 uint_var& uint_var::modMult(const uint_var& mult,const uint_var& mod){
+#ifndef MULTSHIFTADD
     uint_var* temp = &((*this)*mult);
     uint_var* result = &((*temp)%mod);
     delete temp;
     return *result;
+#else
+    uint_var* temp = new uint_var(mod.numLength+1);
+    uint_var* result;
+    uint32_t wS = (sizeof(uint32_t)*8);
+    for(uint32_t i = 0; i < numLength*wS;i++){
+        uint32_t word = (i/wS);
+        uint32_t shift = wS-1-(i%wS);
+        uint32_t mask = 1u<<shift;
+        (*temp)<<=1;
+        if(num[word]&mask){
+            (*temp)+=mult;
+        }
+        if(!((*temp)<mod)){
+            (*temp)-=mod;
+        }
+        if(!((*temp)<mod)){
+            (*temp)-=mod;
+        }
+    }
+    result = new uint_var(mod.numLength);
+    memcpy((*result).num,(*temp).num+1,mod.numLength*sizeof(uint32_t));
+    delete temp;
+    return *result;
+#endif
+}
+
+
+//Index from highest magnitude first. aka, index 0 is highest significant bit.
+bool uint_var::operator[](uint32_t pos){
+    uint32_t wS = (sizeof(uint32_t)*8);
+    uint32_t word = pos/wS;
+    uint32_t shift = wS-1-(pos%wS);
+    uint32_t mask = 1u<<shift;
+    return (num[word]&mask)>>shift;
 }
 
 uint_var& uint_var::modExp(const uint_var& power,const uint_var& mod){
-    /* Naive implementation
-     uint_var i(power.numLength);
-     uint_var* result = new uint_var(numLength);
-     (*result)=1;
-     for( ; i<power;i++){
-     result = &((*result).modMult(*this, mod));
-     }
-     return *result;
-     */
+#ifndef MODEXPMARY
+    //Binary method
     uint_var* result = new uint_var(numLength);
-    (*result)=1;
+    uint32_t mask = 0x80000000;
+    uint32_t word = 0;
+    if ( power.num[0]&mask){
+        (*result)=(*this);
+    } else{
+        (*result)=1;
+    }
+    mask>>=1;
+    
     uint_var* temp;
-    uint_var* base = new uint_var(*this);
-    uint_var pow(power);
-    while(pow.notZero()){
-        if(pow.num[pow.numLength-1]& 1){
-            temp = &((*result).modMult(*base, mod));
+    for(int i = 1; i < power.numLength*sizeof(uint32_t)*8;i++){
+        temp=&(*result).modMult(*result,mod);
+        delete result;
+        result = temp;
+        if(power.num[word]&mask){
+            temp=&(*result).modMult(*this,mod);
             delete result;
             result = temp;
         }
-        pow>>=1;
-        temp = &((*base).modMult(*base, mod));
-        delete base;
-        base = temp;
+        if(mask==1){
+            word++;
+            mask=0x80000000;
+        } else{
+            mask>>=1;
+        }
     }
-    delete base;
     return *result;
+#else
+    //4-ary method
+    uint_var* base2 = &(this->modMult(*this, mod));
+    uint_var* base3 = &(base2->modMult(*this, mod));
+    uint_var* base4 = &(base3->modMult(*this, mod));
+    uint_var* base5 = &(base4->modMult(*this, mod));
+    uint_var* base6 = &(base5->modMult(*this, mod));
+    uint_var* base7 = &(base6->modMult(*this, mod));
+    uint_var* base8 = &(base7->modMult(*this, mod));
+    uint_var* base9 = &(base8->modMult(*this, mod));
+    uint_var* base10 = &(base9->modMult(*this, mod));
+    uint_var* base11 = &(base10->modMult(*this, mod));
+    uint_var* base12 = &(base11->modMult(*this, mod));
+    uint_var* base13 = &(base12->modMult(*this, mod));
+    uint_var* base14 = &(base13->modMult(*this, mod));
+    uint_var* base15 = &(base14->modMult(*this, mod));
+    uint_var* bases[16] = {NULL,this,base2,base3,base4,base5,base6,base7,base8,base9,base10,base11,base12,base13,base14,base15};
+    
+    uint_var* result = new uint_var(numLength);
+    uint32_t mask = 0xF0000000;
+    uint32_t word = 0;
+    uint32_t shift = 28;
+    uint32_t curr = (power.num[0]&mask)>>shift;
+    if(curr == 0){
+        (*result)=1;
+    } else{
+        (*result)=*(bases[curr]);
+    }
+    mask>>=4;
+    shift-=4;
+    
+    uint_var* temp;
+    for(int i = 1; i < power.numLength*sizeof(uint32_t)*8/4;i++){
+        curr = (power.num[word]&mask)>>shift;
+        temp=&(*result).modMult(*result,mod);
+        delete result;
+        result=&(*temp).modMult(*temp,mod);
+        delete temp;
+        temp=&(*result).modMult(*result,mod);
+        delete result;
+        result=&(*temp).modMult(*temp,mod);
+        delete temp;
+        
+        if(curr){
+            temp=&(*result).modMult(*bases[curr],mod);
+            delete result;
+            result = temp;
+        }
+        if(mask==0xF){
+            word++;
+            mask=0xF0000000;
+            shift=28;
+        } else{
+            mask>>=4;
+            shift-=4;
+        }
+    }
+    return *result;
+#endif
 }
 
+uint_var& uint_var::modExp(const uint32_t& power,const uint_var& mod, uint32_t i){
+    //Binary method
+    uint_var* result = new uint_var(numLength);
+    uint32_t mask = 0x80000000>>i;
+    while(!(power&mask) && i<-1+sizeof(uint32_t)*8){
+        i++;
+        mask>>=1;
+    }
+    if ( power&mask){
+        (*result)=(*this);
+    } else{
+        (*result)=1;
+    }
+    mask>>=1;
+    i++;
+    
+    uint_var* temp;
+    for(; i < sizeof(uint32_t)*8;i++){
+        temp=&(*result).modMult(*result,mod);
+        delete result;
+        result = temp;
+        if(power&mask){
+            temp=&(*result).modMult(*this,mod);
+            delete result;
+            result = temp;
+        }
+        mask>>=1;
+    }
+    return *result;
+}
 
 uint_var& uint_var::operator=(const uint32_t& other){
     for (int64_t i = 0;i<numLength-1;i++){

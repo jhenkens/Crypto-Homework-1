@@ -84,13 +84,20 @@ int main(int argc, const char * argv[])
     uint_var exp(CS290BITLENGTH/32,num[1]);
     uint_var mod(CS290BITLENGTH/32,num[2]);
     uint_var resultPreCalc(CS290BITLENGTH/32,num[3]);
-//    base.print();
-//    exp.print();
-//    mod.print();
+    
+#ifdef MULTSHIFTADD
+    printf("Using shift-add mult\n");
+#endif
+#ifdef MODEXPMARY
+    printf("Using m-ary mod exp with m=4\n");
+#endif
+    
+    base.print();
+    exp.print();
+    mod.print();
     uint_var* result = &(base.modExp(exp,mod));
-    assert((*result)==resultPreCalc);
-//    uint_var* result2 = &(a%b);
     result->print();
+    assert((*result)==resultPreCalc);
     delete result;
     int i = 0;
     for(; i<41943040/(CS290BITLENGTH*CS290BITLENGTH); i++){
@@ -98,7 +105,22 @@ int main(int argc, const char * argv[])
         delete result;
     }
     printf("Ran %d tests.\n",i);
-//    printf("%d\n",b>0);
+    
+
+//    uint32_t b[1] = {12345};
+//    uint32_t e[1] = {0xFFFFFFFF};
+//    uint32_t m[1] = {369};
+//    
+//    uint_var base(1,b);
+//    uint_var exp(1,e);
+//    uint_var mod(1,m);
+//    uint_var* result = &(base.modExp(0xFFFFFFFF, mod));
+//    result->print();
+//    result = &(base.modExp(exp,mod));
+//    result->print();
+//    
+    
+    
     return 0;
 }
 
