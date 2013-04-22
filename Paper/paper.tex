@@ -5,8 +5,8 @@
 \begin{document}
 
 
-\title{Architectures for Unified Field Inversion with Applications 
-in Elliptic Curve Cryptography}
+\title{Performance Analysis of Modular \break
+Exponentiation Algorithms}
 
 
 \author{Johan Henkens
@@ -24,12 +24,44 @@ E-mail: \texttt{jhenkens@cs.ucsb.edu}}
 \textbf{Table 1:} Speed up experienced through M-ary modular exponentiation with M=4. \\[1em]
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} \hline
 Number Size & Binary & M-Ary & \% Speedup  \\ \hline
-160 & 1368  & 327 & 4.18 \\ \hline
-192 & 1911  & 398 & 5.00 \\ \hline
-224 & 2544  & 469 & 5.42 \\ \hline
-256 & 3276  & 526 & 6.23 \\ \hline
+256 	& 0.12653s 	& 0.10968s	& 115.3\% \\ \hline
+512 	& 1.0097s  	& 0.85315s	& 118.3\% \\ \hline
+1024 	& 7.9431s  	& 6.6540s	& 119.4\% \\ \hline
+2048 	& 64.415s  	& 53.963	& 119.4\% \\ \hline
 \end{tabular}
 \end{center}
+
+\begin{center}
+\textbf{Table 2:} Speed up experienced through Shift-Add modular multiplication. \\[1em]
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} \hline
+Number Size & Standard & Shift-Add & \% Speedup  \\ \hline
+256 	& 0.12653s 	& 0.027780s	& 455.5\% \\ \hline
+512 	& 1.0097s  	& 0.21618s	& 467.1\% \\ \hline
+1024 	& 7.9431s  	& 1.5398s	& 515.9\% \\ \hline
+2048 	& 64.415s  	& 11.892s	& 541.7\% \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\textbf{Table 3:} Executable size for 256 bit test program. \\[1em]
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} \hline
+Optimization & Size in Bytes \\ \hline
+None 		&  14140 \\ \hline
+M-Ary 		&  14288 \\ \hline
+Shift-Add 	&  14140 \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\textbf{Table 4:} Memory usage for 256 bit test program. \\[1em]
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} \hline
+Optimization & Allocs & Bytes Allocated \\ \hline
+None 		&  2660	& 200428\\ \hline
+M-Ary 		&  2282	& 171916\\ \hline
+Shift-Add 	&  1523	& 44280\\ \hline
+\end{tabular}	
+\end{center}
+
 
 \end{document}
 
