@@ -1,0 +1,41 @@
+Basic form:
+
+256 bit:
+81.111s / 641 tests = 0.126538221528861s per modexp
+
+512 bit:
+162.567s / 161 tests = 1.009732919254658s per modexp
+
+1024 bit:
+325.671s / 41 tests = 7.94319512195122s per modexp
+
+2048 bit:
+708.568 / 11 tests = 64.415272727272727s per modexp
+
+
+
+MARY optimized:
+256 bit:
+70.309/641 = 0.109686427457098s per modexp
+
+512 bit:
+137.358 /161 = 0.853155279503106s per modexp
+
+1024 bit:
+272.815/41 = 6.654024390243902 per modexp
+
+2048 bit:
+593.595/11 =53.963181818181818 per modexp
+
+ShiftAdd Optimized:
+256 bit:
+17.807/641 = 0.027780031201248s per modexp
+
+512 bit:
+34.806s/161 = 0.216186335403727
+
+1024 bit:
+63.132s/41 = 1.53980487804878
+
+2048bit:
+130.821s/11= 11.892818181818182s per
